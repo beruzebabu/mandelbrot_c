@@ -3,6 +3,7 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
+#include <ctype.h>
 #include "calculations.h"
 #include "simplecomplex.h"
 
@@ -19,7 +20,18 @@ int main(int argc, char* args[])
 
     clock_t start_time = clock();
 
-    const char * filename = args[1];
+    char filename[sizeof(char) * strlen(args[1])];
+    filename[0] = 0x00;
+
+    for (size_t i = 0; args[1][i] != NULL; i++)
+    {
+        if (isprint(args[1][i]) == 0)
+            continue;
+        
+        int len = strlen(filename);
+        filename[len] = args[1][i];
+        filename[len + 1] = 0x00;
+    }
 
     size_t width = strtoull(args[2], NULL, 10);
     size_t height = strtoull(args[3], NULL, 10);
