@@ -12,7 +12,8 @@ int main(int argc, char* args[])
 {
     if (argc < 9)
     {
-        printf_s("Incorrect amount of parameters supplied, exiting!");
+        printf_s("Incorrect amount of parameters supplied, exiting!\n");
+        printf_s("Example usage: mandelbrot.exe image.tif 256 256 -1 1 1 -1 255\n");
         return 1;
     }
 
@@ -72,8 +73,8 @@ int main(int argc, char* args[])
 
     clock_t end_time = clock();
 
-    printf_s("Time taken: %fs", (double)(end_time - start_time)/CLOCKS_PER_SEC);
-    printf_s("Image written to file %s", filename);
+    printf_s("Time taken: %fs\n", (double)(end_time - start_time)/CLOCKS_PER_SEC);
+    printf_s("Image written to file %s\n", filename);
 
     return 0;
 }

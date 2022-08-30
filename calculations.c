@@ -25,22 +25,14 @@ extern size_t calculate_fractal(complex * c, size_t limit) {
     return 0;
 }
 
-extern complex * pixel_to_point(size_t width, size_t height, size_t pixel_x, size_t pixel_y, complex upper_left, complex lower_right) {
-    double w = lower_right.real - upper_left.real;
-    double h = upper_left.imaginary - lower_right.imaginary;
-
-    complex * point = (complex *)malloc(sizeof(complex));
-
-    if (point == NULL)
-    {
-        puts("Failed to allocate memory in point calculation\n");
-        return;
-    }
+extern void pixel_to_point(complex * point, size_t width, size_t height, size_t pixel_x, size_t pixel_y, complex * upper_left, complex * lower_right) {
+    double w = lower_right->real - upper_left->real;
+    double h = upper_left->imaginary - lower_right->imaginary;
     
-    point->real = upper_left.real + (double)pixel_x * w / (double)width;
-    point->imaginary = upper_left.imaginary - (double)pixel_y * h / (double)height;
-    
-    return point;
+    point->real = upper_left->real + (double)pixel_x * w / (double)width;
+    point->imaginary = upper_left->imaginary - (double)pixel_y * h / (double)height;
+
+    return;
 }
 
 extern unsigned char * render(size_t width, size_t height, complex upper_left, complex lower_right, size_t limit) {
@@ -52,11 +44,18 @@ extern unsigned char * render(size_t width, size_t height, complex upper_left, c
         return NULL;
     }
 
+    complex * point = (complex *)malloc(sizeof(complex));
+    if (point == NULL)
+    {
+        puts("Failed to allocate memory for point calculation\n");
+        return NULL;
+    }
+
     for (size_t h = 0; h < height; h++)
     {
         for (size_t w = 0; w < width; w++)
         {
-            complex * point = pixel_to_point(width, height, w, h, upper_left, lower_right);
+            pixel_to_point(point, width, height, w, h, &upper_left, &lower_right);
 
             if (point == NULL)
             {
@@ -64,11 +63,11 @@ extern unsigned char * render(size_t width, size_t height, complex upper_left, c
                 return NULL;
             }
 
-            size_t pixel_result = calculate_fractal(point, limit);
-            free(point);
-
-            image[w*width+h] = pixel_result;
+            image[w*width+h] = calculate_fractal(point, limit);
         }
     }
+    
+    free(point);
+
     return image;
 }
